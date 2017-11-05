@@ -132,8 +132,7 @@ static struct fuse_operations xmp_oper = {
 	.create         = xmp_create,
 	.release	= xmp_release,
 	.fsync		= xmp_fsync,
-#ifdef HAVE_SETXATTR
-	.setxattr	= xmp_setxattr,
+  .setxattr	= xmp_setxattr,
 	.getxattr	= xmp_getxattr,
 	.listxattr	= xmp_listxattr,
 	.removexattr	= xmp_removexattr,
