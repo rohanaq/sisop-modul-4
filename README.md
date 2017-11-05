@@ -176,9 +176,7 @@ direktori /tmp/fuse :
 
 
 
-<<<<<<< HEAD
 ### 2.3 Soal Latihan 
 1. Dari contoh soal diatas ubahlah nama file back up menjadi <nama file>.<ekstensi>.bak. . File backup tersebut hanya bisa dibuka/dibaca, tidak bisa diedit.  
 
 >>>>>>> 92641ff51403eb0831a583abc819628588aa39fa
-
