@@ -94,15 +94,7 @@ Filesystem in Userspace (FUSE) merupakan mekanisme sistem operasi untuk sistem o
 Modul kernel FUSE dan FUSE library berhubungan melalui sebuah special file descriptor yang didapatkan dengan membuka /dev/fuse. File ini dapat terbuka berkali-kali dan file deskriptor yang diperoleh diteruskan ke mount syscall, untuk menyesuaikan deskriptor dengan filesystem mount. FUSE kernel module meneruskan request ke aplikasi fuse anda dan aplikasi anda memerintahkan fuse dengan cara menjawab request. 
 
 ### 2.1 Instalasi Fuse
-1. Download FUSE dari https://github.com/libfuse/libfuse/releases pada bagian Download stable
-release
-2. Extract file tar.gz dan masuk ke direktori FUSE. (tar –xvzf fuse-2.9.4.tar.gz)
-3. Lakukan installasi FUSE dengan cara:
-	a. Gunakan hak akses super user (sudo su)
-	b. Ketikkan perintah ./configure
-	c. Ketikkan perintah make
-	d. Ketikkan perintah make install
-4. FUSE siap digunakan
+1. sudo apt-get install libfuse-dev
 
 ### 2.2 Membuat File System dengan FUSE
 
