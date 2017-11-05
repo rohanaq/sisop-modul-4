@@ -184,6 +184,6 @@ direktori /tmp/fuse :
 
 
 
-### 2.3 Soal Latihan 
+# Soal Latihan
 1. 
 
