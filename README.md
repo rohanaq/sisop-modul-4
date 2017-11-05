@@ -12,7 +12,7 @@ Requirement:
 
 ## Daftar Isi
 - [1. File System](https://github.com/rohanaq/sisop-modul-4#1-file-system)
-- [1.1 Tipe File System](https://github.com/rohanaq/sisop-modul-4#11-tipe-file-system) 
+- [1.1 Tipe File System](https://github.com/rohanaq/sisop-modul-4#11-tipe-file-system)
 - [1.2 Virtual File System](https://github.com/rohanaq/sisop-modul-4#12-virtual-file-system)
 - [1.3 Dentry](https://github.com/rohanaq/sisop-modul-4#13-dentry)
 - [1.4 Superblock](https://github.com/rohanaq/sisop-modul-4#14-superblock)
@@ -39,7 +39,7 @@ Konsep baru untuk manajemen file adalah konsep file system berbasis database. Se
 
 **4. File System Transaksional**
 
-Setiap operasi disk dapat melibatkan perubahan ke sejumlah file dan struktur disk yang berbeda. Dalam 
+Setiap operasi disk dapat melibatkan perubahan ke sejumlah file dan struktur disk yang berbeda. Dalam
 banyak kasus, perubahan ini berhubungan. Hali in iberarti bahwa operasi ini dieksekusi pada waktu yang sama.
 
 **5. File System Jaringan**
@@ -87,97 +87,66 @@ Inode adalah abstraksi VFS untuk berkas. Setiap berkas, directory, dan data lain
 ![Inode](images/inode.png)
 
 # 2. File System in Userspace (FUSE)
-Filesystem in Userspace (FUSE) merupakan mekanisme sistem operasi untuk sistem operasi Unix-like yang memungkinkan pengguna tidak ber-hak istimewa menciptakan file system mereka sendiri tanpa mengubah kode kernel. Hal ini dicapai dengan menjalankan kode file system di userspace, sedangkan modul FUSE hanya menyediakan "jembatan" untuk antarmuka kernel yang sebenarnya.
+FUSE (Filesystem in Userspace) adalah sebuah _interface_ dimana kita dapat membuat _filesystem_ linux sendiri di _userspace_.
+
+lalu apa yang menyenangkan dari membuat _filesystem_ sendiri di userspace? tentu saja menyenangkan dan merupakan suatu keuntungan yang besar, kita dapat menggunakan _library_ apapun yang tersedia untuk membuat sebuah _filesystem_ sendiri tanpa perlu mengganti kode pada kernel dan tanpa perlu mengerti secara mendalam apa yang _filesystem_ sebenarnya lakukan di _kernelspace_. hal ini dapat dilakukan karena adanya modul fuse yang **menjembatani** antara kode _filesystem_ yang berada di _userspace_ dengan _filesystem_ yang berada di _kernelspace_.
+
+salah satu contoh yang menarik dari fuse adalah [GDFS][7bb7b7cc] (Google Drive File System) dimana GDFS ini memungkinkan kita untuk menunggangkan (mount) Google Drive kita ke sistem linux dan menggunakannya seperti file linux biasa.
+
+  [7bb7b7cc]: https://github.com/robin-thomas/GDFS "GDFS"
 
 ![FUSE](images/fuse.png)
 
-Modul kernel FUSE dan FUSE library berhubungan melalui sebuah special file descriptor yang didapatkan dengan membuka /dev/fuse. File ini dapat terbuka berkali-kali dan file deskriptor yang diperoleh diteruskan ke mount syscall, untuk menyesuaikan deskriptor dengan filesystem mount. FUSE kernel module meneruskan request ke aplikasi fuse anda dan aplikasi anda memerintahkan fuse dengan cara menjawab request. 
+Untuk mengimplementasikan FUSE ini, kita harus membuat sebuah program yang terhubung dengan *library* ```libfuse```. tujuan dari program yang dibuat ini adalah menspesifikkan bagaimana *filesystem* merespon *read/write/stat* dari sebuah *request*. program ini juga digunakan untuk menunggangkan *(mount)* *filesystem* asli *(kernelspace)* ke *filesystem* yang baru *(userspace)*. jadi disaat *user* berurusan dengan *read/write/stat request* di *filesystem (userspace)*, kernel akan meneruskan *input output request* tersebut ke program FUSE dan program tersebut akan merespon kembali ke *user*.
+Untuk lebih jelasnya mari kita coba membuat program FUSE.
 
-### 2.1 Instalasi Fuse
-1. sudo apt-get install libfuse-dev
+##### Instalasi FUSE
+Pertama-tama kita harus memstikan bahwa FUSE sudah ter-install di perangkat anda
+```
+$ sudo apt update
+$ sudo apt install libfuse*
+```
+##### Membuat Program FUSE
+Fuse memiliki ```struct``` yang dinamakan ```fuse_operations``` yang didefinisikan seperti dibawah ini:
+```
+static struct fuse_operations xmp_oper = {
+	.getattr	= xmp_getattr,
+	.access		= xmp_access,
+	.readlink	= xmp_readlink,
+	.readdir	= xmp_readdir,
+	.mknod		= xmp_mknod,
+	.mkdir		= xmp_mkdir,
+	.symlink	= xmp_symlink,
+	.unlink		= xmp_unlink,
+	.rmdir		= xmp_rmdir,
+	.rename		= xmp_rename,
+	.link		= xmp_link,
+	.chmod		= xmp_chmod,
+	.chown		= xmp_chown,
+	.truncate	= xmp_truncate,
+	.utimens	= xmp_utimens,
+	.open		= xmp_open,
+	.read		= xmp_read,
+	.write		= xmp_write,
+	.statfs		= xmp_statfs,
+	.create         = xmp_create,
+	.release	= xmp_release,
+	.fsync		= xmp_fsync,
+#ifdef HAVE_SETXATTR
+	.setxattr	= xmp_setxattr,
+	.getxattr	= xmp_getxattr,
+	.listxattr	= xmp_listxattr,
+	.removexattr	= xmp_removexattr,
+#endif
+};
+```
+Dapat dilihat bahwa semua atribut pada ```struct``` tersebut adalah pointer yang menuju ke fungsi. setiap fungsi tersebut disebut FUSE saat suatu kejadian yang spesifik terjadi di *filesystem*; sebagai contoh saat user menulis di sebuah file, sebuah fungsi yang ditunjuk oleh atribut "write" di ```struct``` akan terpanggil.
 
-### 2.2 Membuat File System dengan FUSE
+jika kita perhatikan atribut pada ```struct``` tersebut maka kita akan menyadari bahwa atribut yang tertulis disitu adalah sebuah fungsi yang biasa digunakan di linux. sebagai contoh saat kita membuat *directory* di FUSE maka fungsi mkdir akan dipanggil begitu juga fungsi-fungsi lainnya.
 
-FUSE dengan memindahkan semua isi direktori /home/[nama user kalian]/Downloads akan dimount ke
-direktori /tmp/fuse :
-
-
-	#include <fuse.h>
-	#include <stdio.h>
-	#include <string.h>
-	#include <unistd.h>
-	#include <fcntl.h>
-	#include <dirent.h>
-	#include <errno.h>
-	#include <sys/statfs.h>
-
-
-	static const char *dirpath = "/home/ajk/Downloads";
-
-	static int xmp_getattr(const char *path, struct stat *stbuf)
-	{
-		int res;
-		char fpath[1000];
-		sprintf(fpath,"%s%s",dirpath,path);
-		res = lstat(fpath, stbuf);
-
-		if(res == -1)
-		{
-			return -errno;
-		}
-
-		return 0;
-	}
-
-	static int xmp_getdir(const char *path, fuse_dirh_t h, fuse_dirfil_t filler)
-	{
-		char fpath[1000];
-		if(strcmp(path,"/") == 0)
-		{
-			path=dirpath;
-			sprintf(fpath,"%s",path);
-		}
-		else sprintf(fpath, "%s%s",dirpath,path);
-		int res = 0;
-		DIR *dp;
-		struct dirent *de;
-		dp = opendir(fpath);
-		if(dp==NULL)
-		{
-			return -errno;
-		}
-		while((de = readdir(dp))!=NULL)
-		{
-			res = filler(h, de->d_name, de->d_type);
-			if(res!=0) break;
-		}
-		closedir(dp);
-		return res;
-	}
-
-	static struct fuse_operations xmp_oper =
-	{
-		.getattr = xmp_getattr,
-		.getdir = xmp_getdir
-
-	};
-
-	int main(int argc, char *argv[])
-	{
-		return fuse_main(argc, argv, &xmp_oper);
-	}
+Untuk mengimplementasikan FUSE kita harus menggunakan ```struct``` ini dan harus mendefinisikan fungsi yang ada didalam ```struct``` lalu mengisi ```struct``` tersebut dengan pointer dari fungsi yang ingin diimplementasikan. kebanyakan fungsi yang tersedia adalah opsional; kita tidak perlu mengimplementasikan semuanya; meskipun ada beberapa adalah sesuatu yang penting dari sebuah filesystem yang fungsional (contoh: ```getattr```). ya, beberapa fungsi memang harus diimplementasikan dalam filesystem. fungsi-fungsi tersebut adalah ```getattr```, ```readdir``` dan ```read```.
 
 
-
-	/* Simpan kemudian compile dengan menggunakan perintah: gcc -Wall [nama file].c
-	`pkg-config fuse --cflags --libs` -o [nama file]
-	Kemudian buat sebuah direktori, misalnya: /tmp/fuse
-	Coba jalankan fuse tadi dengan cara: ./[nama file] /tmp/fuse */
-
-
-
-## Soal Latihan 
-1. Dari contoh di atas, ubah nama file back up menjadi [nama file].[ekstensi].bak. File backup tersebut hanya bisa dibuka/dibaca, tidak bisa diedit.  
 
 
 ### References
