@@ -98,10 +98,93 @@ Modul kernel FUSE dan FUSE library berhubungan melalui sebuah special file descr
 release
 2. Extract file tar.gz dan masuk ke direktori FUSE. (tar –xvzf fuse-2.9.4.tar.gz)
 3. Lakukan installasi FUSE dengan cara:
-a. Gunakan hak akses super user (sudo su)
-b. Ketikkan perintah ./configure
-c. Ketikkan perintah make
-d. Ketikkan perintah make install
+	a. Gunakan hak akses super user (sudo su)
+	b. Ketikkan perintah ./configure
+	c. Ketikkan perintah make
+	d. Ketikkan perintah make install
 4. FUSE siap digunakan
 
 ### 2.2 Membuat File System dengan FUSE
+
+FUSE dengan memindahkan semua isi direktori /home/[nama user kalian]/Downloads akan dimount ke
+direktori /tmp/fuse :
+
+
+
+#include <fuse.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <dirent.h>
+#include <errno.h>
+#include <sys/statfs.h>
+
+
+static const char *dirpath = "/home/ncc/Documents";
+
+static int xmp_getattr(const char *path, struct stat *stbuf)
+{
+	int res;
+	char fpath[1000];
+	sprintf(fpath,"%s%s",dirpath,path);
+	res = lstat(fpath, stbuf);
+
+	if(res == -1)
+	{
+		return -errno;
+	}
+
+	return 0;
+}
+
+static int xmp_getdir(const char *path, fuse_dirh_t h, fuse_dirfil_t filler)
+{
+	char fpath[1000];
+	if(strcmp(path,"/") == 0)
+	{
+		path=dirpath;
+		sprintf(fpath,"%s",path);
+	}
+	else sprintf(fpath, "%s%s",dirpath,path);
+	int res = 0;
+	DIR *dp;
+	struct dirent *de;
+	dp = opendir(fpath);
+	if(dp==NULL)
+	{
+		return -errno;
+	}
+	while((de = readdir(dp))!=NULL)
+	{
+		res = filler(h, de->d_name, de->d_type);
+		if(res!=0) break;
+	}
+	closedir(dp);
+	return res;
+}
+
+static struct fuse_operations xmp_oper =
+{
+	.getattr = xmp_getattr,
+	.getdir = xmp_getdir
+
+};
+
+int main(int argc, char *argv[])
+{
+	return fuse_main(argc, argv, &xmp_oper);
+}
+
+
+
+/* Simpan kemudian compile dengan menggunakan perintah: gcc -Wall [nama file].c
+`pkg-config fuse --cflags --libs` -o [nama file]
+Kemudian buat sebuah direktori, misalnya: /tmp/fuse
+Coba jalankan fuse tadi dengan cara: ./[nama file] /tmp/fuse */
+
+
+
+### 2.3 SOAL Latihan 
+1. 
+
