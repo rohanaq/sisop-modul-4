@@ -85,14 +85,14 @@ Inode adalah abstraksi VFS untuk berkas. Setiap berkas, directory, dan data lain
 - File System Specific Information: Menunjukkan informasi khusus yang dibutuhkan oleh suatu inode.
 ![Inode](images/inode.png)
 
-# File System in Userspace (FUSE)
+# 2 File System in Userspace (FUSE)
 Filesystem in Userspace (FUSE) merupakan mekanisme sistem operasi untuk sistem operasi Unix-like yang memungkinkan pengguna tidak ber-hak istimewa menciptakan file system mereka sendiri tanpa mengubah kode kernel. Hal ini dicapai dengan menjalankan kode file system di userspace, sedangkan modul FUSE hanya menyediakan "jembatan" untuk antarmuka kernel yang sebenarnya.
 
 ![FUSE](images/fuse.png)
 
 Modul kernel FUSE dan FUSE library berhubungan melalui sebuah special file descriptor yang didapatkan dengan membuka /dev/fuse. File ini dapat terbuka berkali-kali dan file deskriptor yang diperoleh diteruskan ke mount syscall, untuk menyesuaikan deskriptor dengan filesystem mount. FUSE kernel module meneruskan request ke aplikasi fuse anda dan aplikasi anda memerintahkan fuse dengan cara menjawab request. 
 
-### Instalasi Fuse
+### 2.1 Instalasi Fuse
 1. Download FUSE dari http://fuse.sourceforge.net/ pada bagian Download stable
 release
 2. Extract file tar.gz dan masuk ke direktori FUSE. (tar –xvzf fuse-2.9.4.tar.gz)
