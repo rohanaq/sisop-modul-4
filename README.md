@@ -145,6 +145,7 @@ jika kita perhatikan atribut pada ```struct``` tersebut maka kita akan menyadari
 
 Untuk mengimplementasikan FUSE kita harus menggunakan ```struct``` ini dan harus mendefinisikan fungsi yang ada didalam ```struct``` lalu mengisi ```struct``` tersebut dengan pointer dari fungsi yang ingin diimplementasikan. kebanyakan fungsi yang tersedia adalah opsional; kita tidak perlu mengimplementasikan semuanya; meskipun ada beberapa adalah sesuatu yang penting dari sebuah filesystem yang fungsional (contoh: ```getattr```). ya, beberapa fungsi memang harus diimplementasikan dalam filesystem. fungsi-fungsi tersebut adalah ```getattr```, ```readdir``` dan ```read```.
 
+Fungsi getattr akan dipanggil saat sistem mencoba untuk mendapatkan atribut dari sebuah file, Fungsi readdir akan dipanggil saat user mencoba untuk menampilkan file dan direktori yang berada pada suatu direktori yang spesifik, sedangkan funsi read seperti yang kita baca dari namanya funsi read akan dipanggil saat sistem mencoba untuk membaca potongan demi potongan data dari suatu file.
 
 
 
