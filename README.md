@@ -19,6 +19,7 @@ Requirement:
 - [1.5 Inode](https://github.com/rohanaq/sisop-modul-4#15-inode)
 - [2. File System in Userspace (FUSE)](https://github.com/rohanaq/sisop-modul-4#2-file-system-in-userspace-fuse)
 - [2.1 Instalasi Fuse](https://github.com/rohanaq/sisop-modul-4#21-instalasi-fuse)
+- [2.2 Membuat File System dengan Fuse](https://github.com/rohanaq/sisop-modul-4#22-membuat-file-system-dengan-fuse)
 
 # 1. File System
 File System adalah struktur logika yang digunakan untuk mengendalikan akses terhadap data yang ada pada harddisk. Terdapat berbagai jenis-jenisnya dan penggunaan algoritma yang berbeda. Semakin baru jenis dari sebuah File System, maka semakin bagus pula kualitas dari File System tersebut.
@@ -85,7 +86,7 @@ Inode adalah abstraksi VFS untuk berkas. Setiap berkas, directory, dan data lain
 - File System Specific Information: Menunjukkan informasi khusus yang dibutuhkan oleh suatu inode.
 ![Inode](images/inode.png)
 
-# 2 File System in Userspace (FUSE)
+# 2. File System in Userspace (FUSE)
 Filesystem in Userspace (FUSE) merupakan mekanisme sistem operasi untuk sistem operasi Unix-like yang memungkinkan pengguna tidak ber-hak istimewa menciptakan file system mereka sendiri tanpa mengubah kode kernel. Hal ini dicapai dengan menjalankan kode file system di userspace, sedangkan modul FUSE hanya menyediakan "jembatan" untuk antarmuka kernel yang sebenarnya.
 
 ![FUSE](images/fuse.png)
@@ -102,3 +103,5 @@ b. Ketikkan perintah ./configure
 c. Ketikkan perintah make
 d. Ketikkan perintah make install
 4. FUSE siap digunakan
+
+### 2.2 Membuat File System dengan FUSE
