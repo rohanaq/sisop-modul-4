@@ -18,6 +18,8 @@ Requirement:
 - [1.4 Superblock](https://github.com/rohanaq/sisop-modul-4#14-superblock)
 - [1.5 Inode](https://github.com/rohanaq/sisop-modul-4#15-inode)
 - [2. File System in Userspace (FUSE)](https://github.com/rohanaq/sisop-modul-4#file-system-in-userspace-fuse)
+- [2.1 Instalasi Fuse](https://github.com/rohanaq/sisop-modul-4#instalasi-fuse)
+
 # 1. File System
 File System adalah struktur logika yang digunakan untuk mengendalikan akses terhadap data yang ada pada harddisk. Terdapat berbagai jenis-jenisnya dan penggunaan algoritma yang berbeda. Semakin baru jenis dari sebuah File System, maka semakin bagus pula kualitas dari File System tersebut.
 
