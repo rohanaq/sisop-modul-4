@@ -108,7 +108,7 @@ $ sudo apt install libfuse*
 ```
 ##### Membuat Program FUSE
 Fuse memiliki ```struct``` yang dinamakan ```fuse_operations``` yang didefinisikan seperti dibawah ini:
-```
+```c
 static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
 	.access		= xmp_access,
@@ -148,7 +148,7 @@ Untuk mengimplementasikan FUSE kita harus menggunakan ```struct``` ini dan harus
 Fungsi getattr akan dipanggil saat sistem mencoba untuk mendapatkan atribut dari sebuah file, Fungsi readdir akan dipanggil saat user mencoba untuk menampilkan file dan direktori yang berada pada suatu direktori yang spesifik, sedangkan funsi read seperti yang kita baca dari namanya funsi read akan dipanggil saat sistem mencoba untuk membaca potongan demi potongan data dari suatu file.
 
 untuk contoh mari kita implementasikan FUSE sederhana yang hanya menggunakan getattr, readdir dan read silahkan coba code yang ada dibawah ini:
-```
+```c
 #define FUSE_USE_VERSION 28
 #include <fuse.h>
 #include <stdio.h>
