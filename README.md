@@ -94,7 +94,7 @@ Filesystem in Userspace (FUSE) merupakan mekanisme sistem operasi untuk sistem o
 Modul kernel FUSE dan FUSE library berhubungan melalui sebuah special file descriptor yang didapatkan dengan membuka /dev/fuse. File ini dapat terbuka berkali-kali dan file deskriptor yang diperoleh diteruskan ke mount syscall, untuk menyesuaikan deskriptor dengan filesystem mount. FUSE kernel module meneruskan request ke aplikasi fuse anda dan aplikasi anda memerintahkan fuse dengan cara menjawab request. 
 
 ### 2.1 Instalasi Fuse
-1. Download FUSE dari http://fuse.sourceforge.net/ pada bagian Download stable
+1. Download FUSE dari https://github.com/libfuse/libfuse/releases pada bagian Download stable
 release
 2. Extract file tar.gz dan masuk ke direktori FUSE. (tar –xvzf fuse-2.9.4.tar.gz)
 3. Lakukan installasi FUSE dengan cara:
@@ -110,81 +110,80 @@ FUSE dengan memindahkan semua isi direktori /home/[nama user kalian]/Downloads a
 direktori /tmp/fuse :
 
 
+	#include <fuse.h>
+	#include <stdio.h>
+	#include <string.h>
+	#include <unistd.h>
+	#include <fcntl.h>
+	#include <dirent.h>
+	#include <errno.h>
+	#include <sys/statfs.h>
 
-#include <fuse.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <dirent.h>
-#include <errno.h>
-#include <sys/statfs.h>
 
+	static const char *dirpath = "/home/ncc/Documents";
 
-static const char *dirpath = "/home/ncc/Documents";
-
-static int xmp_getattr(const char *path, struct stat *stbuf)
-{
-	int res;
-	char fpath[1000];
-	sprintf(fpath,"%s%s",dirpath,path);
-	res = lstat(fpath, stbuf);
-
-	if(res == -1)
+	static int xmp_getattr(const char *path, struct stat *stbuf)
 	{
-		return -errno;
+		int res;
+		char fpath[1000];
+		sprintf(fpath,"%s%s",dirpath,path);
+		res = lstat(fpath, stbuf);
+
+		if(res == -1)
+		{
+			return -errno;
+		}
+
+		return 0;
 	}
 
-	return 0;
-}
-
-static int xmp_getdir(const char *path, fuse_dirh_t h, fuse_dirfil_t filler)
-{
-	char fpath[1000];
-	if(strcmp(path,"/") == 0)
+	static int xmp_getdir(const char *path, fuse_dirh_t h, fuse_dirfil_t filler)
 	{
-		path=dirpath;
-		sprintf(fpath,"%s",path);
+		char fpath[1000];
+		if(strcmp(path,"/") == 0)
+		{
+			path=dirpath;
+			sprintf(fpath,"%s",path);
+		}
+		else sprintf(fpath, "%s%s",dirpath,path);
+		int res = 0;
+		DIR *dp;
+		struct dirent *de;
+		dp = opendir(fpath);
+		if(dp==NULL)
+		{
+			return -errno;
+		}
+		while((de = readdir(dp))!=NULL)
+		{
+			res = filler(h, de->d_name, de->d_type);
+			if(res!=0) break;
+		}
+		closedir(dp);
+		return res;
 	}
-	else sprintf(fpath, "%s%s",dirpath,path);
-	int res = 0;
-	DIR *dp;
-	struct dirent *de;
-	dp = opendir(fpath);
-	if(dp==NULL)
+
+	static struct fuse_operations xmp_oper =
 	{
-		return -errno;
-	}
-	while((de = readdir(dp))!=NULL)
+		.getattr = xmp_getattr,
+		.getdir = xmp_getdir
+
+	};
+
+	int main(int argc, char *argv[])
 	{
-		res = filler(h, de->d_name, de->d_type);
-		if(res!=0) break;
+		return fuse_main(argc, argv, &xmp_oper);
 	}
-	closedir(dp);
-	return res;
-}
-
-static struct fuse_operations xmp_oper =
-{
-	.getattr = xmp_getattr,
-	.getdir = xmp_getdir
-
-};
-
-int main(int argc, char *argv[])
-{
-	return fuse_main(argc, argv, &xmp_oper);
-}
 
 
 
-/* Simpan kemudian compile dengan menggunakan perintah: gcc -Wall [nama file].c
-`pkg-config fuse --cflags --libs` -o [nama file]
-Kemudian buat sebuah direktori, misalnya: /tmp/fuse
-Coba jalankan fuse tadi dengan cara: ./[nama file] /tmp/fuse */
+	/* Simpan kemudian compile dengan menggunakan perintah: gcc -Wall [nama file].c
+	`pkg-config fuse --cflags --libs` -o [nama file]
+	Kemudian buat sebuah direktori, misalnya: /tmp/fuse
+	Coba jalankan fuse tadi dengan cara: ./[nama file] /tmp/fuse */
 
 
 
-### 2.3 SOAL Latihan 
+### 2.3 Soal Latihan 
 1. 
 
