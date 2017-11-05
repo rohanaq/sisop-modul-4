@@ -233,7 +233,118 @@ setelah itu simpan kode dengan nama file cobafuse.c lalu compile dengan cara:
 gcc -Wall `pkg-config fuse --cflags` cobafuse.c -o cobafuse `pkg-config fuse --libs
 ```
 
+lalu buatlah sebuah folder untuk tujuan pembuatan FUSE. misal buat sebuah folder dengan nama ```test``` lalu menjalankan fusenya pada folder ```test``` tersebut.
+```
+$ mkdir test
+$ ./cobafuse test
+```
+setelah program dijalankan, masuklah kedalam folder tujuan tersebut. maka isinya adalah list folder yang sama seperti yang ada didalam ```root``` atau ```/```
 
+sesuai dengan penjelasan di awal bab FUSE, dimana FUSE dapat memodifikasi filesystem di userspace tanpa perlu mengubah kode yang ada pada kernel. nah, disini kita coba memodifikasi kode FUSE tadi agar FUSE tersebut menampilkan apa yang ada didalam folder (misal) ```/home/administrator/Documents```.
+ubah kode FUSE tadi seperti yang ada dibawah ini:
+
+```c
+#define FUSE_USE_VERSION 28
+#include <fuse.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <dirent.h>
+#include <errno.h>
+#include <sys/time.h>
+
+static const char *dirpath = "/home/administrator/Documents";
+
+static int xmp_getattr(const char *path, struct stat *stbuf)
+{
+  int res;
+	char fpath[1000];
+	sprintf(fpath,"%s%s",dirpath,path);
+	res = lstat(fpath, stbuf);
+
+	if (res == -1)
+		return -errno;
+
+	return 0;
+}
+
+static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
+		       off_t offset, struct fuse_file_info *fi)
+{
+  char fpath[1000];
+	if(strcmp(path,"/") == 0)
+	{
+		path=dirpath;
+		sprintf(fpath,"%s",path);
+	}
+	else sprintf(fpath, "%s%s",dirpath,path);
+	int res = 0;
+
+	DIR *dp;
+	struct dirent *de;
+
+	(void) offset;
+	(void) fi;
+
+	dp = opendir(fpath);
+	if (dp == NULL)
+		return -errno;
+
+	while ((de = readdir(dp)) != NULL) {
+		struct stat st;
+		memset(&st, 0, sizeof(st));
+		st.st_ino = de->d_ino;
+		st.st_mode = de->d_type << 12;
+		res = (filler(buf, de->d_name, &st, 0));
+			if(res!=0) break;
+	}
+
+	closedir(dp);
+	return 0;
+}
+
+static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
+		    struct fuse_file_info *fi)
+{
+  char fpath[1000];
+	if(strcmp(path,"/") == 0)
+	{
+		path=dirpath;
+		sprintf(fpath,"%s",path);
+	}
+	else sprintf(fpath, "%s%s",dirpath,path);
+	int res = 0;
+  int fd = 0 ;
+
+	(void) fi;
+	fd = open(fpath, O_RDONLY);
+	if (fd == -1)
+		return -errno;
+
+	res = pread(fd, buf, size, offset);
+	if (res == -1)
+		res = -errno;
+
+	close(fd);
+	return res;
+}
+
+static struct fuse_operations xmp_oper = {
+	.getattr	= xmp_getattr,
+	.readdir	= xmp_readdir,
+	.read		= xmp_read,
+};
+
+int main(int argc, char *argv[])
+{
+	umask(0);
+	return fuse_main(argc, argv, &xmp_oper, NULL);
+}
+
+```
 
 ### References
-https://www.cs.hmc.edu/~geoff/classes/hmc.cs135.201109/homework/fuse/fuse_doc.html
+1. https://www.cs.hmc.edu/~geoff/classes/hmc.cs135.201109/homework/fuse/fuse_doc.html
+2. http://www.maastaar.net/fuse/linux/filesystem/c/2016/05/21/writing-a-simple-filesystem-using-fuse/
+3. https://github.com/asayler/CU-CS3753-PA5
