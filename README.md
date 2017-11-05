@@ -112,7 +112,7 @@ direktori /tmp/fuse :
 	#include <sys/statfs.h>
 
 
-	static const char *dirpath = "/home/ncc/Documents";
+	static const char *dirpath = "/home/ajk/Downloads";
 
 	static int xmp_getattr(const char *path, struct stat *stbuf)
 	{
