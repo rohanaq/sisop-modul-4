@@ -55,7 +55,7 @@ File System untuk tujuan khusus adalah file system yang tidak termasuk disk file
 File system yang mencatat perubahan ke dalam jurnal (biasanya berupa log sirkuolar dalam area tertentu) sebelum melakukan perubahan ke file system. Filesystem seperti ini memiliki kemungkinan yang lebih kecil mengalami kerusakan saat terjadi power failure atau system crash.
 
 ### 1.2 Virtual File System
-**Virtual file system** adalah suatu lapisan perangkat lunak dalam kernel yang menyediakan interface sistem berkas untuk program userspace. Virtual file system berfungsi agar berbagai sistem berkas yang berbeda dapat di akses oleh aplikasi komputer dengan cara yang seragam. VPS menyediakan antarmuka antara system call dengan system yang sesungguhnya.
+**Virtual file system** adalah suatu lapisan perangkat lunak dalam kernel yang menyediakan interface sistem berkas untuk program userspace. Virtual file system berfungsi agar berbagai sistem berkas yang berbeda dapat di akses oleh aplikasi komputer dengan cara yang seragam. VFS menyediakan antarmuka antara system call dengan system yang sesungguhnya.
 
 ### 1.3 Dentry
 Dentry atau Directory Entry merupakan sebuah struktur data yang memiliki tugas sebagai penerjemah nama berkas ke inode-nya. Contoh informasi yang disimpan dalam dentry adalah name, pointer to inode, pointer to parent dentry, Use Count dan lainnya. Adapula command dalam VFS dentry adalah D_compare , D_delete , D_release.
@@ -73,7 +73,7 @@ sistem berkas.
 ![Superblock](images/superblock.png)
 
 ### 1.5 Inode
-Inode adalah abstraksi VFS untuk berkas. Setiap berkas, directory, dan data lainnya pada VFS direpresentasikan oleh satu dan hanya satu VFS inode. VFS inode hanya terdapat di memori kernel dan disimpan di inode chace selama masih dibutuhkan oleh sistem. Informasi yang disimpan oleh VPS Inode diantaranya:
+Inode adalah abstraksi VFS untuk berkas. Setiap berkas, directory, dan data lainnya pada VFS direpresentasikan oleh satu dan hanya satu VFS inode. VFS inode hanya terdapat di memori kernel dan disimpan di inode chace selama masih dibutuhkan oleh sistem. Informasi yang disimpan oleh VFS Inode diantaranya:
 - Device: Menunjukan device identifier dari suatu device yang menyimpan berkas, ataupun directory.
 - Inode Number: Merupakan nomor inode yang unik dalam sistem berkas.
 - Mode: Menggambarkan apa yang direpresentasikan oleh VFS inode.
