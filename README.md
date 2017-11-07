@@ -230,7 +230,7 @@ int main(int argc, char *argv[])
 ```
 setelah itu simpan kode dengan nama file cobafuse.c lalu compile dengan cara:
 ```
-gcc -Wall `pkg-config fuse --cflags` cobafuse.c -o cobafuse `pkg-config fuse --libs
+gcc -Wall `pkg-config fuse --cflags` cobafuse.c -o cobafuse `pkg-config fuse --libs`
 ```
 
 lalu buatlah sebuah folder untuk tujuan pembuatan FUSE. misal buat sebuah folder dengan nama ```test``` lalu menjalankan fusenya pada folder ```test``` tersebut.
