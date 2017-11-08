@@ -27,32 +27,32 @@ File System adalah struktur logika yang digunakan untuk mengendalikan akses terh
 ### 1.1 Tipe File System
 **1. File System Disk**
 
-Sebuah file system disk adalah file system yang didesain untuk menyimpan data pada sebuah media penyimpan data. Contohnya: FAT (FAT 12, FAT 16, FAT 320), NTFS, HFS, HFS+, ext2, ext3, ext4, ISO 9660, ODS-5 dan UDF.
+Sebuah file sistem disk adalah file sistem yang didesain untuk menyimpan data pada sebuah media penyimpan data. Contohnya: FAT (FAT 12, FAT 16, FAT 320), NTFS, HFS, HFS+, ext2, ext3, ext4, ISO 9660, ODS-5 dan UDF.
 
 **2. File System Flash**
 
-Sebuah file system Flash adalah file system yang didesain untuk menyimpan data pada media flash memory. Hal ini menjadi lazim ketika jumlah perangkat mobile semakin banyak dan kapasitas memory flash yang semakin besar.
+Sebuah file sistem flash adalah file sistem yang didesain untuk menyimpan data pada media flash memory. Hal ini menjadi lazim ketika jumlah perangkat mobile semakin banyak dan kapasitas memory flash yang semakin besar.
 
 **3. File System Database**
 
-Konsep baru untuk manajemen file adalah konsep file system berbasis database. Sebagai perbaikan bagi Manajemen terstruktur hirarkis, file diidentifikasi oleh karakteristiknya, seperti tipe file, topik, pembuat atau metadata yang sama.
+Konsep baru untuk manajemen file adalah konsep file sistem berbasis database. Sebagai perbaikan bagi Manajemen terstruktur hirarkis, file diidentifikasi oleh karakteristiknya, seperti tipe file, topik, pembuat atau metadata yang sama.
 
 **4. File System Transaksional**
 
 Setiap operasi disk dapat melibatkan perubahan ke sejumlah file dan struktur disk yang berbeda. Dalam
-banyak kasus, perubahan ini berhubungan. Hali in iberarti bahwa operasi ini dieksekusi pada waktu yang sama.
+banyak kasus, perubahan ini berhubungan. Hal ini berarti bahwa operasi ini dieksekusi pada waktu yang sama.
 
 **5. File System Jaringan**
 
-File System Network adalah file system yang bertindak sebagai klien untuk protokol akses file jarak jauh, memberikan akses ke file pada sebuah server. Contoh dari File system network ini adalah klien protokol NFS, AFS, SMB, dan klien FTP dan WebDAV
+File sistem jaringan adalah file sistem yang bertindak sebagai klien untuk protokol akses file jarak jauh, memberikan akses ke file pada sebuah server. Contoh dari File sistem jaringan ini adalah klien protokol NFS, AFS, SMB, dan klien FTP dan WebDAV
 
 **6. File System untuk Tujuan Khusus**
 
-File System untuk tujuan khusus adalah file system yang tidak termasuk disk file system atau file system Jaringan. Termasuk dalam kategori ini adalah sistem di mana file ditata secara dinamis oleh software, ditujukan untuk tujuan tertentu seperti untuk komunikasi antar proses komputer atau space file sementara. Contohnya file system procfs (/proc) yang dipakai oleh beberapa varian Unix.
+File sistem untuk tujuan khusus adalah file sistem yang tidak termasuk disk file sistem atau file sistem jaringan. Termasuk dalam kategori ini adalah sistem di mana file ditata secara dinamis oleh software, ditujukan untuk tujuan tertentu seperti untuk komunikasi antar proses komputer atau space file sementara. Contohnya file system procfs (/proc) yang dipakai oleh beberapa varian Unix.
 
 **7. File System Journaling**
 
-File system yang mencatat perubahan ke dalam jurnal (biasanya berupa log sirkuolar dalam area tertentu) sebelum melakukan perubahan ke file system. Filesystem seperti ini memiliki kemungkinan yang lebih kecil mengalami kerusakan saat terjadi power failure atau system crash.
+File sistem yang mencatat perubahan ke dalam jurnal (biasanya berupa log sirkular dalam area tertentu) sebelum melakukan perubahan ke file sistem. File sistem seperti ini memiliki kemungkinan yang lebih kecil mengalami kerusakan saat terjadi power failure atau sistem crash.
 
 ### 1.2 Virtual File System
 **Virtual file system** adalah suatu lapisan perangkat lunak dalam kernel yang menyediakan interface sistem berkas untuk program userspace. Virtual file system berfungsi agar berbagai sistem berkas yang berbeda dapat di akses oleh aplikasi komputer dengan cara yang seragam. VFS menyediakan antarmuka antara system call dengan system yang sesungguhnya.
@@ -89,15 +89,24 @@ Inode adalah abstraksi VFS untuk berkas. Setiap berkas, directory, dan data lain
 # 2. File System in Userspace (FUSE)
 FUSE (Filesystem in Userspace) adalah sebuah _interface_ dimana kita dapat membuat _filesystem_ linux sendiri di _userspace_.
 
-lalu apa yang menyenangkan dari membuat _filesystem_ sendiri di userspace? tentu saja menyenangkan dan merupakan suatu keuntungan yang besar, kita dapat menggunakan _library_ apapun yang tersedia untuk membuat sebuah _filesystem_ sendiri tanpa perlu mengganti kode pada kernel dan tanpa perlu mengerti secara mendalam apa yang _filesystem_ sebenarnya lakukan di _kernelspace_. hal ini dapat dilakukan karena adanya modul fuse yang **menjembatani** antara kode _filesystem_ yang berada di _userspace_ dengan _filesystem_ yang berada di _kernelspace_.
+Lalu apa yang menyenangkan dari membuat _filesystem_ sendiri di userspace? Tentu saja menyenangkan dan merupakan suatu keuntungan yang besar, kita dapat menggunakan _library_ apapun yang tersedia untuk membuat sebuah _filesystem_ sendiri tanpa perlu mengganti kode pada kernel dan tanpa perlu mengerti secara mendalam apa yang _filesystem_ sebenarnya lakukan di _kernelspace_. hal ini dapat dilakukan karena adanya modul fuse yang **menjembatani** antara kode _filesystem_ yang berada di _userspace_ dengan _filesystem_ yang berada di _kernelspace_.
 
-salah satu contoh yang menarik dari fuse adalah [GDFS][7bb7b7cc] (Google Drive File System) dimana GDFS ini memungkinkan kita untuk menunggangkan (mount) Google Drive kita ke sistem linux dan menggunakannya seperti file linux biasa.
+Salah satu contoh yang menarik dari fuse adalah [GDFS][7bb7b7cc] (Google Drive File System) dimana GDFS ini memungkinkan kita untuk menunggangkan (mount) Google Drive kita ke sistem linux dan menggunakannya seperti file linux biasa.
 
   [7bb7b7cc]: https://github.com/robin-thomas/GDFS "GDFS"
 
 ![FUSE](images/fuse.png)
 
-Untuk mengimplementasikan FUSE ini, kita harus membuat sebuah program yang terhubung dengan *library* ```libfuse```. tujuan dari program yang dibuat ini adalah menspesifikkan bagaimana *filesystem* merespon *read/write/stat* dari sebuah *request*. program ini juga digunakan untuk menunggangkan *(mount)* *filesystem* asli *(kernelspace)* ke *filesystem* yang baru *(userspace)*. jadi disaat *user* berurusan dengan *read/write/stat request* di *filesystem (userspace)*, kernel akan meneruskan *input output request* tersebut ke program FUSE dan program tersebut akan merespon kembali ke *user*.
+#### Cara Kerja FUSE:
+
+- fuse_main() (lib/helper.c) = sebagain fungsi main (userspace), program user memanggil fungsi fuse_main() kemudian fungsi fuse_mount() dipanggil.
+- fuse_mount() (lib/mount.c) = menciptakan UNIX domain socket, kemudian di fork dan menciptakan child process yang menjalankan fusermount
+- fusermount() (util/fusermount.c) = untuk mengecek apakah modul FUSE sudah di load. Kemudian membuka /dev/fuse dan mengirim file handle melalu UNIX domain socket kembali ke fungsi fuse_mount()
+- fuse_new() (lib/fuse.c) = menciptakan struktur data yang berisi ruang yang digukanan untuk menyimpan data file system
+- fuse_loop() (lib/fuse.c) = membaca file system calls dari /dev/fuse
+
+
+Untuk mengimplementasikan FUSE ini, kita harus membuat sebuah program yang terhubung dengan *library* ```libfuse```. tujuan dari program yang dibuat ini adalah menspesifikkan bagaimana *filesystem* merespon *read/write/stat* dari sebuah *request*. Program ini juga digunakan untuk menautkan *(mount)* *filesystem* asli *(kernelspace)* ke *filesystem* yang baru *(userspace)*. Jadi di saat *user* berurusan dengan *read/write/stat request* di *filesystem (userspace)*, kernel akan meneruskan *input output request* tersebut ke program FUSE dan program tersebut akan merespon kembali ke *user*.
 Untuk lebih jelasnya mari kita coba membuat program FUSE.
 
 ##### Instalasi FUSE
@@ -139,15 +148,47 @@ static struct fuse_operations xmp_oper = {
 #endif
 };
 ```
-Dapat dilihat bahwa semua atribut pada ```struct``` tersebut adalah pointer yang menuju ke fungsi. setiap fungsi tersebut disebut FUSE saat suatu kejadian yang spesifik terjadi di *filesystem*; sebagai contoh saat user menulis di sebuah file, sebuah fungsi yang ditunjuk oleh atribut "write" di ```struct``` akan terpanggil.
+Dapat dilihat bahwa semua atribut pada ```struct``` tersebut adalah pointer yang menuju ke fungsi. Setiap fungsi tersebut disebut FUSE saat suatu kejadian yang spesifik terjadi di *filesystem*. Sebagai contoh saat user menulis di sebuah file, sebuah fungsi yang ditunjuk oleh atribut "write" di ```struct``` akan terpanggil.
 
-jika kita perhatikan atribut pada ```struct``` tersebut maka kita akan menyadari bahwa atribut yang tertulis disitu adalah sebuah fungsi yang biasa digunakan di linux. sebagai contoh saat kita membuat *directory* di FUSE maka fungsi mkdir akan dipanggil begitu juga fungsi-fungsi lainnya.
+Jika kita perhatikan atribut pada ```struct``` tersebut maka kita akan menyadari bahwa atribut yang tertulis di sana adalah sebuah fungsi yang biasa digunakan di linux. sebagai contoh saat kita membuat *directory* di FUSE maka fungsi mkdir akan dipanggil begitu juga fungsi-fungsi lainnya.
 
-Untuk mengimplementasikan FUSE kita harus menggunakan ```struct``` ini dan harus mendefinisikan fungsi yang ada didalam ```struct``` lalu mengisi ```struct``` tersebut dengan pointer dari fungsi yang ingin diimplementasikan. kebanyakan fungsi yang tersedia adalah opsional; kita tidak perlu mengimplementasikan semuanya; meskipun ada beberapa adalah sesuatu yang penting dari sebuah filesystem yang fungsional (contoh: ```getattr```). ya, beberapa fungsi memang harus diimplementasikan dalam filesystem. fungsi-fungsi tersebut adalah ```getattr```, ```readdir``` dan ```read```.
+Untuk mengimplementasikan FUSE kita harus menggunakan ```struct``` ini dan harus mendefinisikan fungsi yang ada didalam ```struct``` lalu mengisi ```struct``` tersebut dengan pointer dari fungsi yang ingin diimplementasikan. Kebanyakan fungsi yang tersedia adalah opsional, kita tidak perlu mengimplementasikan semuanya, meskipun ada beberapa adalah sesuatu yang penting dari sebuah file sistem yang fungsional (contoh: ```getattr```). Beberapa fungsi memang harus diimplementasikan dalam file sistem. Fungsi-fungsi tersebut adalah ```getattr```, ```readdir``` dan ```read```.
 
 Fungsi getattr akan dipanggil saat sistem mencoba untuk mendapatkan atribut dari sebuah file, Fungsi readdir akan dipanggil saat user mencoba untuk menampilkan file dan direktori yang berada pada suatu direktori yang spesifik, sedangkan funsi read seperti yang kita baca dari namanya funsi read akan dipanggil saat sistem mencoba untuk membaca potongan demi potongan data dari suatu file.
 
-untuk contoh mari kita implementasikan FUSE sederhana yang hanya menggunakan getattr, readdir dan read silahkan coba code yang ada dibawah ini:
+Ini adalah beberapa fungsi yang disediakan oleh **FUSE**:
+
+    1. int (*getattr) (const char *, struct stat *);
+    Get file attributes.
+    2. int (*readlink) (const char *, char *, size_t);
+    Read the target of a symbolic link
+    3. int (*mknod) (const char *, mode_t, dev_t);
+    Create a file node. 
+    4. int (*mkdir) (const char *, mode_t);
+    Create a directory.
+    5. int (*unlink) (const char *);
+    Remove a file
+    6. int (*rmdir) (const char *);
+    Remove a directory
+    7. int (*rename) (const char *, const char *);
+    Rename a file
+    8. int (*chmod) (const char *, mode_t);
+    Change the permission bits of a file
+    9. int (*chown) (const char *, uid_t, gid_t);
+    Change the owner and group of a file
+    10. int (*truncate) (const char *, off_t);
+    Change the size of a file
+    11. int (*open) (const char *, struct fuse_file_info *);
+    File open operation.
+    12. int (*readdir) (const char *, void *, fuse_fill_dir_t, off_t, struct fuse_file_info *);
+    Read directory
+    13. int (*read) (const char *, char *, size_t, off_t, struct fuse_file_info *);
+    Read data from an open file
+    14. int (*write) (const char *, const char *, size_t, off_t, struct fuse_file_info *);
+    Write data to an open file
+
+
+Untuk contoh mari kita implementasikan FUSE sederhana yang hanya menggunakan getattr, readdir dan read silahkan coba code yang ada dibawah ini:
 ```c
 #define FUSE_USE_VERSION 28
 #include <fuse.h>
@@ -228,20 +269,22 @@ int main(int argc, char *argv[])
 }
 
 ```
-setelah itu simpan kode dengan nama file cobafuse.c lalu compile dengan cara:
+
+Setelah itu simpan kode dengan nama file cobafuse.c lalu compile dengan cara:
+
 ```
 gcc -Wall `pkg-config fuse --cflags` cobafuse.c -o cobafuse `pkg-config fuse --libs`
 ```
 
-lalu buatlah sebuah folder untuk tujuan pembuatan FUSE. misal buat sebuah folder dengan nama ```test``` lalu menjalankan fusenya pada folder ```test``` tersebut.
+Lalu buatlah sebuah folder untuk tujuan pembuatan FUSE. misal buat sebuah folder dengan nama ```test``` lalu menjalankan fusenya pada folder ```test``` tersebut.
 ```
 $ mkdir test
 $ ./cobafuse test
 ```
-setelah program dijalankan, masuklah kedalam folder tujuan tersebut. maka isinya adalah list folder yang sama seperti yang ada didalam ```root``` atau ```/```
+Setelah program dijalankan, masuklah kedalam folder tujuan tersebut. maka isinya adalah list folder yang sama seperti yang ada didalam ```root``` atau ```/```
 
-sesuai dengan penjelasan di awal bab FUSE, dimana FUSE dapat memodifikasi filesystem di userspace tanpa perlu mengubah kode yang ada pada kernel. nah, disini kita coba memodifikasi kode FUSE tadi agar FUSE tersebut menampilkan apa yang ada didalam folder (misal) ```/home/administrator/Documents```.
-ubah kode FUSE tadi seperti yang ada dibawah ini:
+Sesuai dengan penjelasan di awal bab FUSE, dimana FUSE dapat memodifikasi file sistem di userspace tanpa perlu mengubah kode yang ada pada kernel. nah, Di sini kita coba memodifikasi kode FUSE tadi agar FUSE tersebut menampilkan apa yang ada di dalam folder ```/home/administrator/Documents```.
+Ubah kode FUSE tadi seperti yang ada dibawah ini:
 
 ```c
 #define FUSE_USE_VERSION 28
@@ -345,7 +388,7 @@ int main(int argc, char *argv[])
 ```
 
 ## Soal Latihan
-1. Dari contoh di atas, ubah nama file back up menjadi [nama file].[ekstensi].bak. File backup tersebut hanya bisa dibuka/dibaca, tidak bisa diedit.
+1. Dari contoh-contoh di atas, arahkan file sistem yang kamu buat ke /home/namauser/Downloads, ubah nama file yang ada pada folder tersebut menjadi [nama file].[ekstensi].bak. File .bak tersebut hanya bisa dibuka/dibaca, tidak bisa diedit.
 
 ### References
 1. https://www.cs.hmc.edu/~geoff/classes/hmc.cs135.201109/homework/fuse/fuse_doc.html
