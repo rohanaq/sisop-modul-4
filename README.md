@@ -157,49 +157,49 @@ Untuk mengimplementasikan FUSE kita harus menggunakan ```struct``` ini dan harus
 Fungsi getattr akan dipanggil saat sistem mencoba untuk mendapatkan atribut dari sebuah file, Fungsi readdir akan dipanggil saat user mencoba untuk menampilkan file dan direktori yang berada pada suatu direktori yang spesifik, sedangkan funsi read seperti yang kita baca dari namanya funsi read akan dipanggil saat sistem mencoba untuk membaca potongan demi potongan data dari suatu file.
 
 Ini adalah beberapa fungsi yang disediakan oleh **FUSE**:
-
+```c
 	int (*getattr) (const char *, struct stat *);
-	Get file attributes.
+	//Get file attributes.
 
 	int (*readlink) (const char *, char *, size_t);
-	Read the target of a symbolic link
+	//Read the target of a symbolic link
 	
 	int (*mknod) (const char *, mode_t, dev_t);
-	Create a file node. 
+	//Create a file node. 
 
 	int (*mkdir) (const char *, mode_t);
-	Create a directory.
+	//Create a directory.
 
 	int (*unlink) (const char *);
-	Remove a file
+	//Remove a file
 
 	int (*rmdir) (const char *);
-	Remove a directory
+	//Remove a directory
 
 	int (*rename) (const char *, const char *);
-	Rename a file
+	//Rename a file
 
 	int (*chmod) (const char *, mode_t);
-	Change the permission bits of a file
+	//Change the permission bits of a file
 
 	int (*chown) (const char *, uid_t, gid_t);
-	Change the owner and group of a file
+	//Change the owner and group of a file
 
 	int (*truncate) (const char *, off_t);
-	Change the size of a file
+	//Change the size of a file
 
 	int (*open) (const char *, struct fuse_file_info *);
-	File open operation.
+	//File open operation.
 
 	int (*readdir) (const char *, void *, fuse_fill_dir_t, off_t, struct fuse_file_info *);
-	Read directory
+	//Read directory
 
 	int (*read) (const char *, char *, size_t, off_t, struct fuse_file_info *);
-	Read data from an open file
+	//Read data from an open file
 
 	int (*write) (const char *, const char *, size_t, off_t, struct fuse_file_info *);
-	Write data to an open file
-
+	//Write data to an open file
+```
 
 Untuk contoh mari kita implementasikan FUSE sederhana yang hanya menggunakan getattr, readdir dan read silahkan coba code yang ada dibawah ini:
 ```c
