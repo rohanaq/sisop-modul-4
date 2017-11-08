@@ -97,14 +97,6 @@ Salah satu contoh yang menarik dari fuse adalah [GDFS][7bb7b7cc] (Google Drive F
 
 ![FUSE](images/fuse.png)
 
-#### Cara Kerja FUSE:
-
-- fuse_main() (lib/helper.c) = sebagain fungsi main (userspace), program user memanggil fungsi fuse_main() kemudian fungsi fuse_mount() dipanggil.
-- fuse_mount() (lib/mount.c) = menciptakan UNIX domain socket, kemudian di fork dan menciptakan child process yang menjalankan fusermount
-- fusermount() (util/fusermount.c) = untuk mengecek apakah modul FUSE sudah di load. Kemudian membuka /dev/fuse dan mengirim file handle melalu UNIX domain socket kembali ke fungsi fuse_mount()
-- fuse_new() (lib/fuse.c) = menciptakan struktur data yang berisi ruang yang digukanan untuk menyimpan data file system
-- fuse_loop() (lib/fuse.c) = membaca file system calls dari /dev/fuse
-
 
 Untuk mengimplementasikan FUSE ini, kita harus membuat sebuah program yang terhubung dengan *library* ```libfuse```. tujuan dari program yang dibuat ini adalah menspesifikkan bagaimana *filesystem* merespon *read/write/stat* dari sebuah *request*. Program ini juga digunakan untuk menautkan *(mount)* *filesystem* asli *(kernelspace)* ke *filesystem* yang baru *(userspace)*. Jadi di saat *user* berurusan dengan *read/write/stat request* di *filesystem (userspace)*, kernel akan meneruskan *input output request* tersebut ke program FUSE dan program tersebut akan merespon kembali ke *user*.
 Untuk lebih jelasnya mari kita coba membuat program FUSE.
@@ -115,46 +107,14 @@ Pertama-tama kita harus memstikan bahwa FUSE sudah ter-install di perangkat anda
 $ sudo apt update
 $ sudo apt install libfuse*
 ```
-##### Membuat Program FUSE
-Fuse memiliki ```struct``` yang dinamakan ```fuse_operations``` yang didefinisikan seperti dibawah ini:
-```c
-static struct fuse_operations xmp_oper = {
-	.getattr	= xmp_getattr,
-	.access		= xmp_access,
-	.readlink	= xmp_readlink,
-	.readdir	= xmp_readdir,
-	.mknod		= xmp_mknod,
-	.mkdir		= xmp_mkdir,
-	.symlink	= xmp_symlink,
-	.unlink		= xmp_unlink,
-	.rmdir		= xmp_rmdir,
-	.rename		= xmp_rename,
-	.link		= xmp_link,
-	.chmod		= xmp_chmod,
-	.chown		= xmp_chown,
-	.truncate	= xmp_truncate,
-	.utimens	= xmp_utimens,
-	.open		= xmp_open,
-	.read		= xmp_read,
-	.write		= xmp_write,
-	.statfs		= xmp_statfs,
-	.create         = xmp_create,
-	.release	= xmp_release,
-	.fsync		= xmp_fsync,
-  .setxattr	= xmp_setxattr,
-	.getxattr	= xmp_getxattr,
-	.listxattr	= xmp_listxattr,
-	.removexattr	= xmp_removexattr,
-#endif
-};
-```
-Dapat dilihat bahwa semua atribut pada ```struct``` tersebut adalah pointer yang menuju ke fungsi. Setiap fungsi tersebut disebut FUSE saat suatu kejadian yang spesifik terjadi di *filesystem*. Sebagai contoh saat user menulis di sebuah file, sebuah fungsi yang ditunjuk oleh atribut "write" di ```struct``` akan terpanggil.
 
-Jika kita perhatikan atribut pada ```struct``` tersebut maka kita akan menyadari bahwa atribut yang tertulis di sana adalah sebuah fungsi yang biasa digunakan di linux. sebagai contoh saat kita membuat *directory* di FUSE maka fungsi mkdir akan dipanggil begitu juga fungsi-fungsi lainnya.
+#### Cara Kerja FUSE:
 
-Untuk mengimplementasikan FUSE kita harus menggunakan ```struct``` ini dan harus mendefinisikan fungsi yang ada didalam ```struct``` lalu mengisi ```struct``` tersebut dengan pointer dari fungsi yang ingin diimplementasikan. Kebanyakan fungsi yang tersedia adalah opsional, kita tidak perlu mengimplementasikan semuanya, meskipun ada beberapa adalah sesuatu yang penting dari sebuah file sistem yang fungsional (contoh: ```getattr```). Beberapa fungsi memang harus diimplementasikan dalam file sistem. Fungsi-fungsi tersebut adalah ```getattr```, ```readdir``` dan ```read```.
-
-Fungsi getattr akan dipanggil saat sistem mencoba untuk mendapatkan atribut dari sebuah file, Fungsi readdir akan dipanggil saat user mencoba untuk menampilkan file dan direktori yang berada pada suatu direktori yang spesifik, sedangkan funsi read seperti yang kita baca dari namanya funsi read akan dipanggil saat sistem mencoba untuk membaca potongan demi potongan data dari suatu file.
+- fuse_main() (lib/helper.c) = sebagain fungsi main (userspace), program user memanggil fungsi fuse_main() kemudian fungsi fuse_mount() dipanggil.
+- fuse_mount() (lib/mount.c) = menciptakan UNIX domain socket, kemudian di fork dan menciptakan child process yang menjalankan fusermount
+- fusermount() (util/fusermount.c) = untuk mengecek apakah modul FUSE sudah di load. Kemudian membuka /dev/fuse dan mengirim file handle melalu UNIX domain socket kembali ke fungsi fuse_mount()
+- fuse_new() (lib/fuse.c) = menciptakan struktur data yang berisi ruang yang digukanan untuk menyimpan data file system
+- fuse_loop() (lib/fuse.c) = membaca file system calls dari /dev/fuse
 
 Ini adalah beberapa fungsi yang disediakan oleh **FUSE**:
 ```c
@@ -200,6 +160,47 @@ Ini adalah beberapa fungsi yang disediakan oleh **FUSE**:
 	int (*write) (const char *, const char *, size_t, off_t, struct fuse_file_info *);
 	//Write data to an open file
 ```
+
+##### Membuat Program FUSE
+Fuse memiliki ```struct``` yang dinamakan ```fuse_operations``` yang didefinisikan seperti dibawah ini:
+```c
+static struct fuse_operations xmp_oper = {
+	.getattr	= xmp_getattr,
+	.access		= xmp_access,
+	.readlink	= xmp_readlink,
+	.readdir	= xmp_readdir,
+	.mknod		= xmp_mknod,
+	.mkdir		= xmp_mkdir,
+	.symlink	= xmp_symlink,
+	.unlink		= xmp_unlink,
+	.rmdir		= xmp_rmdir,
+	.rename		= xmp_rename,
+	.link		= xmp_link,
+	.chmod		= xmp_chmod,
+	.chown		= xmp_chown,
+	.truncate	= xmp_truncate,
+	.utimens	= xmp_utimens,
+	.open		= xmp_open,
+	.read		= xmp_read,
+	.write		= xmp_write,
+	.statfs		= xmp_statfs,
+	.create         = xmp_create,
+	.release	= xmp_release,
+	.fsync		= xmp_fsync,
+  .setxattr	= xmp_setxattr,
+	.getxattr	= xmp_getxattr,
+	.listxattr	= xmp_listxattr,
+	.removexattr	= xmp_removexattr,
+#endif
+};
+```
+Dapat dilihat bahwa semua atribut pada ```struct``` tersebut adalah pointer yang menuju ke fungsi. Setiap fungsi tersebut disebut FUSE saat suatu kejadian yang spesifik terjadi di *filesystem*. Sebagai contoh saat user menulis di sebuah file, sebuah fungsi yang ditunjuk oleh atribut "write" di ```struct``` akan terpanggil.
+
+Jika kita perhatikan atribut pada ```struct``` tersebut maka kita akan menyadari bahwa atribut yang tertulis di sana adalah sebuah fungsi yang biasa digunakan di linux. sebagai contoh saat kita membuat *directory* di FUSE maka fungsi mkdir akan dipanggil begitu juga fungsi-fungsi lainnya.
+
+Untuk mengimplementasikan FUSE kita harus menggunakan ```struct``` ini dan harus mendefinisikan fungsi yang ada didalam ```struct``` lalu mengisi ```struct``` tersebut dengan pointer dari fungsi yang ingin diimplementasikan. Kebanyakan fungsi yang tersedia adalah opsional, kita tidak perlu mengimplementasikan semuanya, meskipun ada beberapa adalah sesuatu yang penting dari sebuah file sistem yang fungsional (contoh: ```getattr```). Beberapa fungsi memang harus diimplementasikan dalam file sistem. Fungsi-fungsi tersebut adalah ```getattr```, ```readdir``` dan ```read```.
+
+Fungsi getattr akan dipanggil saat sistem mencoba untuk mendapatkan atribut dari sebuah file, Fungsi readdir akan dipanggil saat user mencoba untuk menampilkan file dan direktori yang berada pada suatu direktori yang spesifik, sedangkan funsi read seperti yang kita baca dari namanya funsi read akan dipanggil saat sistem mencoba untuk membaca potongan demi potongan data dari suatu file.
 
 Untuk contoh mari kita implementasikan FUSE sederhana yang hanya menggunakan getattr, readdir dan read silahkan coba code yang ada dibawah ini:
 ```c
