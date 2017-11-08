@@ -108,7 +108,7 @@ $ sudo apt update
 $ sudo apt install libfuse*
 ```
 
-#### Cara Kerja FUSE:
+##### Cara Kerja FUSE:
 
 - fuse_main() (lib/helper.c) = sebagain fungsi main (userspace), program user memanggil fungsi fuse_main() kemudian fungsi fuse_mount() dipanggil.
 - fuse_mount() (lib/mount.c) = menciptakan UNIX domain socket, kemudian di fork dan menciptakan child process yang menjalankan fusermount
