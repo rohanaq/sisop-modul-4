@@ -158,34 +158,34 @@ Fungsi getattr akan dipanggil saat sistem mencoba untuk mendapatkan atribut dari
 
 Ini adalah beberapa fungsi yang disediakan oleh **FUSE**:
 
-    1. int (*getattr) (const char *, struct stat *);
-    Get file attributes.
-    2. int (*readlink) (const char *, char *, size_t);
-    Read the target of a symbolic link
-    3. int (*mknod) (const char *, mode_t, dev_t);
-    Create a file node. 
-    4. int (*mkdir) (const char *, mode_t);
-    Create a directory.
-    5. int (*unlink) (const char *);
-    Remove a file
-    6. int (*rmdir) (const char *);
-    Remove a directory
-    7. int (*rename) (const char *, const char *);
-    Rename a file
-    8. int (*chmod) (const char *, mode_t);
-    Change the permission bits of a file
-    9. int (*chown) (const char *, uid_t, gid_t);
-    Change the owner and group of a file
-    10. int (*truncate) (const char *, off_t);
-    Change the size of a file
-    11. int (*open) (const char *, struct fuse_file_info *);
-    File open operation.
-    12. int (*readdir) (const char *, void *, fuse_fill_dir_t, off_t, struct fuse_file_info *);
-    Read directory
-    13. int (*read) (const char *, char *, size_t, off_t, struct fuse_file_info *);
-    Read data from an open file
-    14. int (*write) (const char *, const char *, size_t, off_t, struct fuse_file_info *);
-    Write data to an open file
+- int (*getattr) (const char *, struct stat *);
+Get file attributes.
+- int (*readlink) (const char *, char *, size_t);
+Read the target of a symbolic link
+- int (*mknod) (const char *, mode_t, dev_t);
+Create a file node. 
+- int (*mkdir) (const char *, mode_t);
+Create a directory.
+- int (*unlink) (const char *);
+Remove a file
+- int (*rmdir) (const char *);
+Remove a directory
+- int (*rename) (const char *, const char *);
+Rename a file
+- int (*chmod) (const char *, mode_t);
+Change the permission bits of a file
+- int (*chown) (const char *, uid_t, gid_t);
+Change the owner and group of a file
+- int (*truncate) (const char *, off_t);
+Change the size of a file
+- int (*open) (const char *, struct fuse_file_info *);
+File open operation.
+- int (*readdir) (const char *, void *, fuse_fill_dir_t, off_t, struct fuse_file_info *);
+Read directory
+- int (*read) (const char *, char *, size_t, off_t, struct fuse_file_info *);
+Read data from an open file
+- int (*write) (const char *, const char *, size_t, off_t, struct fuse_file_info *);
+Write data to an open file
 
 
 Untuk contoh mari kita implementasikan FUSE sederhana yang hanya menggunakan getattr, readdir dan read silahkan coba code yang ada dibawah ini:
